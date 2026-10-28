@@ -43,11 +43,34 @@
     }
     @keyframes brew { from { width: 25%; } to { width: 85%; } }
 
+    /* Raised button, matching the main site: a red face with a navy outline (::before)
+       sitting on an offset halftone edge (::after). Hover lifts it; pressing sinks it like a key. */
     .btn {
-      display: inline-block; padding: 14px 32px; min-height: 44px; border-radius: 999px;
-      font-weight: 600; font-size: 16px; text-decoration: none; background: var(--red); color: #fff;
+      --face: var(--red); --line: var(--navy); --edge: var(--navy);
+      --ex: 4px; --ey: 5px; --dot: 1px; --dot-gap: 3px; --lift: 0px;
+      position: relative; isolation: isolate;
+      display: inline-flex; align-items: center; justify-content: center;
+      min-height: 44px; padding: 12px 30px; border: 2px solid transparent; border-radius: 999px;
+      font-weight: 600; font-size: 16px; line-height: 1.25; text-decoration: none; color: #fff;
+      max-width: 100%; overflow-wrap: anywhere;
+      transform: translate(calc(-1 * var(--lift)), calc(-1 * var(--lift)));
+      transition: transform 120ms ease;
     }
-    .btn:hover { background: var(--navy); }
+    .btn::before, .btn::after {
+      content: ""; position: absolute; inset: -2px; border-radius: inherit; pointer-events: none;
+    }
+    .btn::before { z-index: -1; border: 2px solid var(--line); background: var(--face); }
+    .btn::after {
+      z-index: -2;
+      background-image: radial-gradient(circle, var(--edge) var(--dot), transparent calc(var(--dot) + 0.5px));
+      background-size: var(--dot-gap) var(--dot-gap);
+      transform: translate(calc(var(--ex) + 2 * var(--lift)), calc(var(--ey) + 2 * var(--lift)));
+      transition: transform 120ms ease;
+    }
+    .btn:hover { --lift: 1px; color: #fff; }
+    .btn:active { transform: translate(var(--ex), var(--ey)); transition-duration: 40ms; }
+    .btn:active::after { transform: none; transition-duration: 40ms; }
+    .btn:focus-visible { outline: 3px solid var(--amber); outline-offset: 3px; }
 
     .dot { position: absolute; border-radius: 50%; z-index: -1; }
     .dot-a { width: 120px; height: 120px; background: var(--amber); top: 8%; right: 8%; opacity: .9; }
@@ -62,6 +85,8 @@
     }
     @media (prefers-reduced-motion: reduce) {
       .progress span { animation: none; width: 60%; }
+      .btn, .btn::after { transition: none; }
+      .btn:hover { --lift: 0px; }
     }
   </style>
 </head>
