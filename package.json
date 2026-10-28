@@ -1,0 +1,9 @@
+{
+  "name": "smac-coming-soon",
+  "private": true,
+  "type": "module",
+  "devDependencies": {
+    "cf": "^0.15.0",
+    "wrangler": "^4.154.0"
+  }
+}
