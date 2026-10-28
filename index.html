@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SMAC Media Lab | Coming soon</title>
+  <meta name="description" content="SMAC Media Lab is a Sunshine Coast branding and web design studio. Our new website is under construction.">
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="assets/logo-badge.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap">
+  <style>
+    :root {
+      --navy: #1B2F5B;
+      --red: #B8361C;
+      --amber: #E48F0B;
+      --slate: #566B80;
+      --mist: #EEF2F7;
+      --font: "Poppins", system-ui, -apple-system, "Segoe UI", sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0; font-family: var(--font); color: var(--navy); background: #fff;
+      display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden;
+    }
+    main {
+      flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 28px; padding: 48px 24px; text-align: center; position: relative;
+    }
+    .logo { width: 180px; height: auto; }
+    .eyebrow { margin: 0; font-size: 14px; font-weight: 600; letter-spacing: 3px; color: var(--red); text-transform: uppercase; }
+    h1 { margin: 0; font-size: clamp(40px, 8vw, 80px); font-weight: 800; line-height: 1; letter-spacing: -2px; }
+    .lede { margin: 0; max-width: 520px; font-size: 19px; font-weight: 300; line-height: 1.6; color: var(--slate); }
+
+    /* Bubbling flask progress bar */
+    .progress { width: min(360px, 100%); height: 14px; border-radius: 999px; background: var(--mist); overflow: hidden; }
+    .progress span {
+      display: block; height: 100%; width: 40%; border-radius: inherit;
+      background: linear-gradient(90deg, var(--amber), var(--red));
+      animation: brew 2.4s ease-in-out infinite alternate;
+    }
+    @keyframes brew { from { width: 25%; } to { width: 85%; } }
+
+    .btn {
+      display: inline-block; padding: 14px 32px; min-height: 44px; border-radius: 999px;
+      font-weight: 600; font-size: 16px; text-decoration: none; background: var(--red); color: #fff;
+    }
+    .btn:hover { background: var(--navy); }
+
+    .dot { position: absolute; border-radius: 50%; z-index: -1; }
+    .dot-a { width: 120px; height: 120px; background: var(--amber); top: 8%; right: 8%; opacity: .9; }
+    .dot-b { width: 48px; height: 48px; background: var(--red); bottom: 14%; left: 10%; }
+    .dot-c { width: 24px; height: 24px; background: var(--navy); top: 22%; left: 16%; }
+
+    footer { padding: 24px; text-align: center; font-size: 14px; color: var(--slate); background: var(--mist); }
+
+    @media (max-width: 600px) {
+      .dot-a { width: 72px; height: 72px; top: 4%; right: 4%; }
+      .logo { width: 140px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .progress span { animation: none; width: 60%; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="dot dot-a"></div>
+    <div class="dot dot-b"></div>
+    <div class="dot dot-c"></div>
+
+    <img class="logo" src="assets/logo-badge.png" alt="SMAC Media Lab">
+    <p class="eyebrow">Branding lab · Sunshine Coast</p>
+    <h1>Something's brewing<br>in the lab.</h1>
+    <p class="lede">Our new website is under construction. In the meantime, we're still making brands, websites and SEO that work. Say hello.</p>
+    <div class="progress" role="presentation"><span></span></div>
+    <a class="btn" href="mailto:hello@smacmedialab.com">hello@smacmedialab.com</a>
+  </main>
+  <footer>&copy; <span id="year">2026</span> SMAC Media Lab</footer>
+  <script>document.getElementById("year").textContent = new Date().getFullYear();</script>
+</body>
+</html>
