@@ -2,6 +2,9 @@
   "name": "smac-coming-soon",
   "private": true,
   "type": "module",
+  "scripts": {
+    "deploy": "wrangler deploy --name smac-coming-soon --assets ./public --compatibility-date 2026-09-21 --domain smacmedialab.com.au --domain www.smacmedialab.com.au"
+  },
   "devDependencies": {
     "cf": "^0.15.0",
     "wrangler": "^4.154.0"

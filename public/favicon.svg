@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-93 -215 900 900">
+  <!-- The flask from the SMAC logo (same paths as the main site's LabFlask), with bubbles rising from the neck -->
+  <mask id="m" maskUnits="userSpaceOnUse">
+    <rect x="-100" y="-300" width="1000" height="1100" fill="#fff"/>
+    <path d="M310 368 L310 528 L450 446 Z" fill="#000" stroke="#000" stroke-width="70" stroke-linejoin="round"/>
+  </mask>
+  <path mask="url(#m)" fill="#E48F0B" d="M204 430 C280 412 330 448 357 432 C390 414 450 420 510 430 L590 568 Q612 615 560 615 H154 Q102 615 124 568 Z"/>
+  <path d="M310 368 L310 528 L450 446 Z" fill="#566B80" stroke="#566B80" stroke-width="26" stroke-linejoin="round"/>
+  <path d="M222 57 Q256 57 256 95 V215 Q256 232 247 247 L80 535 Q52 585 62 625 Q75 670 135 670 H580 Q640 670 652 625 Q662 585 634 535 L467 247 Q458 232 458 215 V95 Q458 57 492 57" fill="none" stroke="#B8361C" stroke-width="50" stroke-linejoin="round" stroke-linecap="round"/>
+  <circle cx="330" cy="-10" r="38" fill="#B8361C"/>
+  <circle cx="420" cy="-95" r="48" fill="#E48F0B"/>
+  <circle cx="300" cy="-150" r="30" fill="#1B2F5B"/>
+  <circle cx="480" cy="-180" r="24" fill="#566B80"/>
+</svg>
