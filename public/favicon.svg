@@ -1,14 +1,18 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="-93 -215 900 900">
-  <!-- The flask from the SMAC logo (same paths as the main site's LabFlask), with bubbles rising from the neck -->
-  <mask id="m" maskUnits="userSpaceOnUse">
-    <rect x="-100" y="-300" width="1000" height="1100" fill="#fff"/>
-    <path d="M310 368 L310 528 L450 446 Z" fill="#000" stroke="#000" stroke-width="70" stroke-linejoin="round"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-4 -24 112 140">
+  <!-- The pastel SMAC flask (same paths as the main site's Logo), with bubbles rising from the neck -->
+  <clipPath id="glass"><path d="M37 20 Q44 20 44 27 V46 Q44 52 40.4 58 L17.4 96 Q7.75 112 26.5 112 H77.5 Q96.25 112 86.6 96 L63.6 58 Q60 52 60 46 V27 Q60 20 67 20 Z"/></clipPath>
+  <mask id="gap" maskUnits="userSpaceOnUse" x="-10" y="-30" width="124" height="160">
+    <rect x="-10" y="-30" width="124" height="160" fill="#fff"/>
+    <path d="M37 20 Q44 20 44 27 V46 Q44 52 40.4 58 L17.4 96 Q7.75 112 26.5 112 H77.5 Q96.25 112 86.6 96 L63.6 58 Q60 52 60 46 V27 Q60 20 67 20" fill="none" stroke="#000" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M46 77 L62 87 L46 97 Z" fill="#000" stroke="#000" stroke-width="9" stroke-linejoin="round"/>
   </mask>
-  <path mask="url(#m)" fill="#E48F0B" d="M204 430 C280 412 330 448 357 432 C390 414 450 420 510 430 L590 568 Q612 615 560 615 H154 Q102 615 124 568 Z"/>
-  <path d="M310 368 L310 528 L450 446 Z" fill="#566B80" stroke="#566B80" stroke-width="26" stroke-linejoin="round"/>
-  <path d="M222 57 Q256 57 256 95 V215 Q256 232 247 247 L80 535 Q52 585 62 625 Q75 670 135 670 H580 Q640 670 652 625 Q662 585 634 535 L467 247 Q458 232 458 215 V95 Q458 57 492 57" fill="none" stroke="#B8361C" stroke-width="50" stroke-linejoin="round" stroke-linecap="round"/>
-  <circle cx="330" cy="-10" r="38" fill="#B8361C"/>
-  <circle cx="420" cy="-95" r="48" fill="#E48F0B"/>
-  <circle cx="300" cy="-150" r="30" fill="#1B2F5B"/>
-  <circle cx="480" cy="-180" r="24" fill="#566B80"/>
+  <g clip-path="url(#glass)"><g mask="url(#gap)">
+    <path d="M0 86 Q16 80 32 84 Q42 78 52 83 Q62 88 72 82 Q88 78 104 84 V120 H0 Z" fill="#fbd27a"/>
+    <path d="M0 90 Q15 84 30 88 Q41 83 52 88 Q62 93 74 86 Q88 82 104 90 V120 H0 Z" fill="#fde68a"/>
+  </g></g>
+  <path d="M46 77 L62 87 L46 97 Z" fill="#1b2f5b" stroke="#1b2f5b" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M37 20 Q44 20 44 27 V46 Q44 52 40.4 58 L17.4 96 Q7.75 112 26.5 112 H77.5 Q96.25 112 86.6 96 L63.6 58 Q60 52 60 46 V27 Q60 20 67 20" fill="none" stroke="#1b2f5b" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="53" cy="5" r="6" fill="#93cdf0"/>
+  <circle cx="44" cy="-8" r="4.5" fill="#f9a8c9"/>
+  <circle cx="58" cy="-17" r="4" fill="#b5a3f5"/>
 </svg>

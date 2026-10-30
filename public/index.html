@@ -4,130 +4,352 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>SMAC Media Lab | Coming soon</title>
-  <meta name="description" content="SMAC Media Lab is a Sunshine Coast branding and web design studio. Our new website is under construction.">
+  <meta name="description" content="SMAC Media Lab is a Sunshine Coast branding and web design studio. Our new website is landing soon.">
   <meta name="robots" content="noindex">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500&family=Poppins:wght@300;400;600;800&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap">
   <style>
+    /* Same tokens as the main site (pastel brand guidelines, Oct 2026) */
     :root {
-      --navy: #1B2F5B;
-      --red: #B8361C;
-      --amber: #E48F0B;
-      --slate: #566B80;
-      --mist: #EEF2F7;
+      --navy: #1b2f5b;
+      --slate: #566b80;
+      --line: #e3e8ef;
+      --butter: #fde68a;
+      --sky: #bfe3fb;
+      --blush: #fbcfe0;
+      --mint: #c7f0dc;
+      --lilac: #ddd3fb;
+      --marker: #f9c74f;
+      --shadow-soft: 0 8px 24px rgb(27 47 91 / 0.08);
+      --shadow-lift: 0 14px 34px rgb(27 47 91 / 0.12);
       --font: "Poppins", system-ui, -apple-system, "Segoe UI", sans-serif;
+      --cell: 72px;
     }
     * { box-sizing: border-box; }
-    html, body { height: 100%; }
     body {
-      margin: 0; font-family: var(--font); color: var(--navy); background: #fff;
-      display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden;
+      position: relative; isolation: isolate; margin: 0; min-height: 100vh; min-height: 100svh;
+      display: flex; flex-direction: column; overflow-x: clip;
+      font-family: var(--font); color: var(--navy); background: #fff;
     }
+    a { color: inherit; text-decoration: none; }
+
+    /* ---- Background: a wall of pastel blocks that drops into place on load (built by the script) ---- */
+    /* as tall as the page (up to 1080px), so the fade to white always lands behind the wordmark */
+    .blocks { position: absolute; inset: 0 0 auto; height: min(100%, 1080px); z-index: -1; overflow: hidden; pointer-events: none; }
+    .wall { position: absolute; left: 50%; top: 0; transform: translateX(-50%); }
+    .block { position: absolute; padding: 3px; }
+    .block > span { display: block; width: 100%; height: 100%; border-radius: 14px; }
+    .block.drop { animation: block-drop 420ms cubic-bezier(0.55, 0, 0.85, 0.35) backwards; }
+    @keyframes block-drop {
+      0% { transform: translateY(-1100px); }
+      85% { transform: translateY(3px); }
+      100% { transform: none; }
+    }
+    /* soft white glow behind the headline, and a fade into white below */
+    .blocks::before, .blocks::after { content: ""; position: absolute; inset: 0; z-index: 1; }
+    .blocks::before { background: radial-gradient(ellipse 55% 45% at 50% 42%, rgb(255 255 255 / 0.92), rgb(255 255 255 / 0.55) 60%, transparent 100%); }
+    .blocks::after { top: auto; height: 40%; background: linear-gradient(to bottom, transparent, #fff 75%); }
+
+    /* ---- Header pill ---- */
+    header { width: 100%; max-width: 1440px; margin: 0 auto; padding: 16px 16px 0; }
+    .pill {
+      display: flex; align-items: center; justify-content: space-between; gap: 16px;
+      padding: 8px 8px 8px 20px; border-radius: 999px;
+      background: rgb(255 255 255 / 0.85); box-shadow: var(--shadow-soft), inset 0 0 0 1px #fff;
+      backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    }
+
+    /* ---- Logo: flask + "smac / MEDIA LAB" ---- */
+    .logo { display: flex; align-items: center; gap: 10px; }
+    .flask { position: relative; display: block; width: 42px; height: 44px; }
+    .flask svg { width: 100%; height: 100%; overflow: visible; }
+    .float { transform-box: fill-box; transform-origin: center; animation: bob 4s ease-in-out infinite; }
+    @keyframes bob { 50% { transform: translateY(-4px); } }
+    .rise {
+      position: absolute; left: calc(50% + var(--x)); top: 38%; width: var(--size); height: var(--size);
+      border-radius: 50%; background: var(--c); opacity: 0;
+      animation: rise var(--dur) ease-out var(--delay) infinite;
+    }
+    @keyframes rise {
+      0% { transform: translate(-50%, 0) scale(0.3); opacity: 0; }
+      15% { opacity: 1; }
+      70% { opacity: 0.9; }
+      100% { transform: translate(calc(-50% + var(--drift)), -34px) scale(1); opacity: 0; }
+    }
+    .lockup { display: inline-flex; flex-direction: column; line-height: 1; }
+    .lockup b { font-size: 26px; font-weight: 800; letter-spacing: -0.03em; }
+    .lockup small { display: flex; justify-content: space-between; margin-top: -3px; font-size: 9.5px; font-weight: 400; }
+
+    /* ---- Hero ---- */
     main {
       flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
-      gap: 28px; padding: 48px 24px; text-align: center; position: relative; isolation: isolate; overflow: hidden;
+      padding: 80px 16px 72px; text-align: center;
     }
-    /* The badge PNG is a wide white canvas: crop to the square badge and multiply away the white
-       so the graph paper shows through. */
-    .logo { width: 240px; aspect-ratio: 1; object-fit: cover; mix-blend-mode: multiply; }
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: 10px; margin: 0; padding: 8px 16px; border-radius: 999px;
+      font-size: 14px; background: rgb(255 255 255 / 0.85); box-shadow: var(--shadow-soft);
+    }
+    .eyebrow::before { content: ""; width: 8px; height: 8px; border-radius: 2px; background: var(--marker); }
+    h1 {
+      max-width: 1100px; margin: 32px 0 0; font-size: clamp(2.75rem, 8vw, 7.25rem); font-weight: 800;
+      line-height: 0.95; letter-spacing: -0.045em;
+    }
+    .lede { max-width: 680px; margin: 32px 0 0; font-size: clamp(18px, 2.2vw, 22px); font-weight: 300; line-height: 1.6; color: var(--slate); }
+    .actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 16px; margin-top: 44px; }
 
-    /* Lab notebook backdrop, matching the main site: faint navy grid with branding formulas scribbled on it */
-    .graph-paper, .scribbles { position: absolute; inset: 0; z-index: -1; pointer-events: none; }
-    .graph-paper {
-      opacity: .06;
-      background-image: linear-gradient(var(--navy) 1px, transparent 1px), linear-gradient(90deg, var(--navy) 1px, transparent 1px);
-      background-size: 40px 40px;
-    }
-    .scribbles span {
-      position: absolute; left: var(--x); top: var(--y); transform: rotate(var(--r));
-      font-family: "Caveat", cursive; font-weight: 500; font-size: var(--s, 28px);
-      color: rgb(27 47 91 / .16); white-space: nowrap; user-select: none;
-    }
-    .eyebrow { margin: 0; font-size: 14px; font-weight: 600; letter-spacing: 3px; color: var(--red); text-transform: uppercase; }
-    h1 { margin: 0; font-size: clamp(28px, 8vw, 80px); font-weight: 800; line-height: 1; letter-spacing: -2px; }
-    .lede { margin: 0; max-width: 520px; font-size: 19px; font-weight: 300; line-height: 1.6; color: var(--slate); }
-
-    /* Bubbling flask progress bar */
-    .progress { width: min(360px, 100%); height: 14px; border-radius: 999px; background: var(--mist); overflow: hidden; }
-    .progress span {
-      display: block; height: 100%; width: 40%; border-radius: inherit;
-      background: linear-gradient(90deg, var(--amber), var(--red));
-      animation: brew 2.4s ease-in-out infinite alternate;
-    }
-    @keyframes brew { from { width: 25%; } to { width: 85%; } }
-
-    /* Raised button, matching the main site: a red face with a navy outline (::before)
-       sitting on an offset halftone edge (::after). Hover lifts it; pressing sinks it like a key. */
+    /* ---- Arrow buttons: colour floods the pill on hover, the arrow zips, bubbles pop on press ---- */
     .btn {
-      --face: var(--red); --line: var(--navy); --edge: var(--navy);
-      --ex: 4px; --ey: 5px; --dot: 1px; --dot-gap: 3px; --lift: 0px;
-      position: relative; isolation: isolate;
-      display: inline-flex; align-items: center; justify-content: center;
-      min-height: 44px; padding: 12px 30px; border: 2px solid transparent; border-radius: 999px;
-      font-weight: 600; font-size: 16px; line-height: 1.25; text-decoration: none; color: #fff;
-      max-width: 100%; overflow-wrap: anywhere;
-      transform: translate(calc(-1 * var(--lift)), calc(-1 * var(--lift)));
-      transition: transform 120ms ease;
+      position: relative; isolation: isolate; display: inline-flex; align-items: center; gap: 12px;
+      min-height: 44px; padding: 8px 24px 8px 8px; border-radius: 999px; background: #fff;
+      box-shadow: var(--shadow-soft); font-weight: 600; line-height: 1.25; max-width: 100%;
+      transition: transform 150ms ease, box-shadow 150ms ease;
     }
-    .btn::before, .btn::after {
-      content: ""; position: absolute; inset: -2px; border-radius: inherit; pointer-events: none;
+    .btn:hover { transform: translateY(-2px); box-shadow: var(--shadow-lift); }
+    .btn:active { transform: scale(0.95); transition-duration: 60ms; }
+    .btn:focus-visible { outline: 3px solid var(--marker); outline-offset: 3px; }
+    .btn-flood {
+      position: absolute; inset: 0; z-index: -1; border-radius: inherit; background: var(--tint);
+      clip-path: circle(20px at 28px 50%); transition: clip-path 420ms cubic-bezier(0.2, 0.8, 0.2, 1);
     }
-    .btn::before { z-index: -1; border: 2px solid var(--line); background: var(--face); }
-    .btn::after {
-      z-index: -2;
-      background-image: radial-gradient(circle, var(--edge) var(--dot), transparent calc(var(--dot) + 0.5px));
-      background-size: var(--dot-gap) var(--dot-gap);
-      transform: translate(calc(var(--ex) + 2 * var(--lift)), calc(var(--ey) + 2 * var(--lift)));
-      transition: transform 120ms ease;
+    .btn:is(:hover, :focus-visible) .btn-flood { clip-path: circle(160% at 28px 50%); }
+    .btn-dot {
+      display: grid; place-items: center; flex-shrink: 0; width: 40px; height: 40px; overflow: hidden;
+      border-radius: 999px; background: var(--tint); transition: background-color 250ms ease;
     }
-    .btn:hover { --lift: 1px; color: #fff; }
-    .btn:active { transform: translate(var(--ex), var(--ey)); transition-duration: 40ms; }
-    .btn:active::after { transform: none; transition-duration: 40ms; }
-    .btn:focus-visible { outline: 3px solid var(--amber); outline-offset: 3px; }
+    .btn:is(:hover, :focus-visible) .btn-dot { background: #fff; }
+    .btn-arrow { display: grid; }
+    .btn-arrow svg { width: 16px; height: 16px; }
+    .btn:is(:hover, :focus-visible) .btn-arrow { animation: zip 480ms cubic-bezier(0.5, 0, 0.2, 1); }
+    @keyframes zip {
+      45% { transform: translateX(18px); }
+      46% { transform: translateX(-18px); }
+      100% { transform: none; }
+    }
+    .btn-label { overflow-wrap: anywhere; }
+    .pop {
+      position: absolute; left: 28px; top: 50%; z-index: 1; width: var(--size); height: var(--size);
+      border-radius: 999px; background: var(--c); pointer-events: none;
+      animation: pop 650ms cubic-bezier(0.15, 0.8, 0.3, 1) forwards;
+    }
+    @keyframes pop {
+      from { transform: translate(-50%, -50%) scale(0.4); opacity: 1; }
+      60% { opacity: 1; }
+      to { transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(1); opacity: 0; }
+    }
 
-    footer { padding: 24px; text-align: center; font-size: 14px; color: var(--slate); background: var(--mist); }
-
-    /* On narrow screens keep only the formulas that sit clear of the text */
-    @media (max-width: 900px) {
-      .scribbles .wide { display: none; }
+    /* ---- Footer: small print, then the giant wordmark cut off by the page edge ---- */
+    footer { width: 100%; max-width: 1440px; margin: 0 auto; padding: 0 16px; }
+    .small { margin: 0 0 8px; font-size: 14px; color: var(--slate); text-align: center; }
+    .wordmark-clip {
+      overflow: hidden; padding-top: 1.5em; margin-top: -1.5em; pointer-events: none;
+      font-size: 12vw; font-weight: 800; line-height: 1; letter-spacing: -0.055em;
     }
-    @media (max-width: 600px) {
-      .logo { width: 180px; }
-      .scribbles span { --s: 22px; }
+    .wordmark { display: flex; justify-content: space-between; height: 0.74em; margin: 0; white-space: nowrap; }
+    .wm-letter { display: inline-block; pointer-events: auto; transition: transform 380ms cubic-bezier(0.34, 1.56, 0.64, 1); }
+    .wm-letter:hover { transform: translateY(-0.24em); }
+    .wm-drop { display: inline-block; }
+    .wm-armed .wm-drop { opacity: 0; }
+    .wm-in .wm-drop { animation: wm-drop 700ms cubic-bezier(0.5, 0, 0.75, 0) var(--d) both; }
+    @keyframes wm-drop {
+      0% { opacity: 0; transform: translateY(-140%); }
+      10% { opacity: 1; }
+      55% { transform: translateY(0); animation-timing-function: cubic-bezier(0.2, 0.8, 0.4, 1); }
+      72% { transform: translateY(-14%); animation-timing-function: cubic-bezier(0.6, 0, 0.8, 0.4); }
+      86% { transform: translateY(0); animation-timing-function: cubic-bezier(0.2, 0.8, 0.4, 1); }
+      93% { transform: translateY(-4%); }
+      100% { opacity: 1; transform: none; }
+    }
+
+    @media (min-width: 640px) {
+      header, footer { padding-left: 24px; padding-right: 24px; }
+    }
+    @media (min-width: 1024px) {
+      header, footer { padding-left: 72px; padding-right: 72px; }
+    }
+    @media (min-width: 1440px) {
+      .wordmark-clip { font-size: 172px; }
+    }
+    @media (max-width: 639px) {
+      :root { --cell: 56px; }
+      main { padding-top: 56px; }
     }
     @media (prefers-reduced-motion: reduce) {
-      .progress span { animation: none; width: 60%; }
-      .btn, .btn::after { transition: none; }
-      .btn:hover { --lift: 0px; }
+      .block.drop, .float, .btn:is(:hover, :focus-visible) .btn-arrow { animation: none; }
+      .rise { display: none; }
+      .btn, .btn-flood, .btn-dot, .wm-letter { transition: none; }
+      .btn:hover, .wm-letter:hover { transform: none; }
     }
   </style>
 </head>
 <body>
-  <main>
-    <div class="graph-paper" aria-hidden="true"></div>
-    <div class="scribbles" aria-hidden="true">
-      <span style="--x:4%;--y:5%;--r:-6deg;--s:30px">St + Id + Vo = Brand²</span>
-      <span style="--x:68%;--y:4%;--r:4deg">Logo ≠ Brand</span>
-      <span class="wide" style="--x:3%;--y:28%;--r:-5deg;--s:26px">Trust = Consistency × Time</span>
-      <span class="wide" style="--x:78%;--y:24%;--r:5deg;--s:26px">Fame ∝ Distinctiveness</span>
-      <span class="wide" style="--x:6%;--y:50%;--r:-7deg">√Strategy × Craft</span>
-      <span class="wide" style="--x:82%;--y:48%;--r:7deg">Δbrand / Δt &gt; 0</span>
-      <span class="wide" style="--x:4%;--y:72%;--r:-4deg;--s:26px">Purpose → Preference</span>
-      <span class="wide" style="--x:80%;--y:70%;--r:6deg">H₂O → H₂Wow</span>
-      <span style="--x:5%;--y:92%;--r:3deg;--s:26px">(Story + Design)ⁿ</span>
-      <span style="--x:72%;--y:91%;--r:-4deg">next: ???</span>
-    </div>
+  <div class="blocks" aria-hidden="true"><div class="wall" id="wall"></div></div>
 
-    <img class="logo" src="assets/logo-badge.png" alt="SMAC Media Lab">
-    <p class="eyebrow">Branding lab · Sunshine Coast</p>
-    <h1>Something's brewing<br>in the lab.</h1>
-    <p class="lede">Our new website is under construction. In the meantime, we're still making brands, websites and SEO that work. Say hello.</p>
-    <div class="progress" role="presentation"><span></span></div>
-    <a class="btn" href="mailto:hello@smacmedialab.com.au">hello@smacmedialab.com.au</a>
+  <header>
+    <div class="pill">
+      <a class="logo" href="/" aria-label="SMAC Media Lab">
+        <span class="flask">
+          <svg viewBox="0 0 104 120" aria-hidden="true">
+            <defs>
+              <clipPath id="glass"><path d="M37 20 Q44 20 44 27 V46 Q44 52 40.4 58 L17.4 96 Q7.75 112 26.5 112 H77.5 Q96.25 112 86.6 96 L63.6 58 Q60 52 60 46 V27 Q60 20 67 20 Z"/></clipPath>
+              <mask id="gap" maskUnits="userSpaceOnUse" x="-10" y="-10" width="124" height="140">
+                <rect x="-10" y="-10" width="124" height="140" fill="#fff"/>
+                <path d="M37 20 Q44 20 44 27 V46 Q44 52 40.4 58 L17.4 96 Q7.75 112 26.5 112 H77.5 Q96.25 112 86.6 96 L63.6 58 Q60 52 60 46 V27 Q60 20 67 20" fill="none" stroke="#000" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M46 77 L62 87 L46 97 Z" fill="#000" stroke="#000" stroke-width="9" stroke-linejoin="round"/>
+              </mask>
+            </defs>
+            <circle class="float" cx="6" cy="62" r="3" fill="#93cdf0"/>
+            <circle class="float" cx="14" cy="40" r="5" fill="#b5a3f5" style="animation-delay:-0.7s"/>
+            <circle class="float" cx="4" cy="96" r="4" fill="#f9a8c9" style="animation-delay:-1.4s"/>
+            <circle class="float" cx="94" cy="30" r="3.5" fill="#8fdcb6" style="animation-delay:-2.1s"/>
+            <circle class="float" cx="98" cy="58" r="5" fill="#fbd27a" style="animation-delay:-2.8s"/>
+            <circle class="float" cx="90" cy="84" r="3" fill="#fdb48c" style="animation-delay:-3.5s"/>
+            <g clip-path="url(#glass)">
+              <g mask="url(#gap)">
+                <path d="M0 86 Q16 80 32 84 Q42 78 52 83 Q62 88 72 82 Q88 78 104 84 V120 H0 Z" fill="#fbd27a"/>
+                <path d="M0 90 Q15 84 30 88 Q41 83 52 88 Q62 93 74 86 Q88 82 104 90 V120 H0 Z" fill="#fde68a"/>
+              </g>
+            </g>
+            <path d="M46 77 L62 87 L46 97 Z" fill="#1b2f5b" stroke="#1b2f5b" stroke-width="3" stroke-linejoin="round"/>
+            <path d="M37 20 Q44 20 44 27 V46 Q44 52 40.4 58 L17.4 96 Q7.75 112 26.5 112 H77.5 Q96.25 112 86.6 96 L63.6 58 Q60 52 60 46 V27 Q60 20 67 20" fill="none" stroke="#1b2f5b" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span class="rise" style="--x:-2px;--drift:-12px;--size:6px;--delay:0s;--dur:2.6s;--c:#f9a8c9"></span>
+          <span class="rise" style="--x:2px;--drift:9px;--size:5px;--delay:.5s;--dur:2.2s;--c:#93cdf0"></span>
+          <span class="rise" style="--x:0px;--drift:-5px;--size:7px;--delay:1s;--dur:2.9s;--c:#b5a3f5"></span>
+          <span class="rise" style="--x:-1px;--drift:14px;--size:4px;--delay:1.5s;--dur:2.4s;--c:#8fdcb6"></span>
+          <span class="rise" style="--x:1px;--drift:-16px;--size:5px;--delay:2s;--dur:2.7s;--c:#fbd27a"></span>
+          <span class="rise" style="--x:0px;--drift:6px;--size:6px;--delay:2.4s;--dur:2.5s;--c:#fdb48c"></span>
+        </span>
+        <span class="lockup" aria-hidden="true">
+          <b>smac</b>
+          <small><span>M</span><span>E</span><span>D</span><span>I</span><span>A</span><span></span><span>L</span><span>A</span><span>B</span></small>
+        </span>
+      </a>
+      <a class="btn" href="mailto:hello@smacmedialab.com.au" style="--tint:var(--butter)">
+        <span class="btn-flood" aria-hidden="true"></span>
+        <span class="btn-dot" aria-hidden="true"><span class="btn-arrow"><svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span></span>
+        <span class="btn-label">Say hello</span>
+      </a>
+    </div>
+  </header>
+
+  <main>
+    <p class="eyebrow">Sunshine Coast branding and web design studio</p>
+    <h1>Something new is landing soon</h1>
+    <p class="lede">Our new website is on its way. In the meantime we're still helping small businesses look sharper, get found faster and run smoother. Say hello.</p>
+    <div class="actions">
+      <a class="btn" href="mailto:hello@smacmedialab.com.au?subject=New%20project" style="--tint:var(--butter)">
+        <span class="btn-flood" aria-hidden="true"></span>
+        <span class="btn-dot" aria-hidden="true"><span class="btn-arrow"><svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span></span>
+        <span class="btn-label">Start a project</span>
+      </a>
+      <a class="btn" href="mailto:hello@smacmedialab.com.au" style="--tint:var(--sky)">
+        <span class="btn-flood" aria-hidden="true"></span>
+        <span class="btn-dot" aria-hidden="true"><span class="btn-arrow"><svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span></span>
+        <span class="btn-label">hello@smacmedialab.com.au</span>
+      </a>
+    </div>
   </main>
-  <footer>&copy; <span id="year">2026</span> SMAC Media Lab</footer>
-  <script>document.getElementById("year").textContent = new Date().getFullYear();</script>
+
+  <footer>
+    <p class="small">&copy; <span id="year">2026</span> SMAC Media Lab · Sunshine Coast, Australia</p>
+    <div class="wordmark-clip" id="wordmark" aria-hidden="true">
+      <p class="wordmark"></p>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+    const calm = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    // ---- Block wall: same seeded packer as the main site's BlockField, so it's the same wall ----
+    (function () {
+      const tints = ["var(--butter)", "var(--sky)", "var(--blush)", "var(--mint)", "var(--lilac)"];
+      // neighbours on the colour wheel; blending opposites (butter + lilac) turns grey
+      const neighbours = [[2, 3], [3, 4], [0, 4], [0, 1], [1, 2]];
+      const shapes = [[1,1],[1,1],[1,1],[2,1],[2,1],[1,2],[1,2],[2,2],[2,2],[3,1],[1,3],[3,2],[2,3]];
+      const cols = 30, rows = 15;
+      let seed = 7;
+      const rand = () => {
+        seed |= 0; seed = (seed + 0x6d2b79f5) | 0;
+        let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+        t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+        return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+      };
+      const tintAt = Array.from({ length: rows }, () => Array(cols).fill(-1));
+      const wall = document.getElementById("wall");
+      wall.style.width = `calc(var(--cell) * ${cols})`;
+      wall.style.height = `calc(var(--cell) * ${rows})`;
+      const html = [];
+      for (let row = 0; row < rows; row++) {
+        for (let col = 0; col < cols; col++) {
+          if (tintAt[row][col] !== -1) continue;
+          const order = [...shapes].sort(() => rand() - 0.5);
+          const [w, h] = order.find(([w, h]) => {
+            if (col + w > cols || row + h > rows) return false;
+            for (let r = row; r < row + h; r++) for (let c = col; c < col + w; c++) if (tintAt[r][c] !== -1) return false;
+            return true;
+          }) || [1, 1];
+          const near = new Set();
+          for (let c = col; c < col + w; c++) if (row > 0) near.add(tintAt[row - 1][c]);
+          for (let r = row; r < row + h; r++) if (col > 0) near.add(tintAt[r][col - 1]);
+          const choices = tints.map((_, i) => i).filter((i) => !near.has(i));
+          const tint = choices[Math.floor(rand() * choices.length)] ?? 0;
+          for (let r = row; r < row + h; r++) for (let c = col; c < col + w; c++) tintAt[r][c] = tint;
+          const delay = (rows - (row + h)) * 65 + Math.floor(rand() * 90);
+          const others = [...neighbours[tint].map((i) => tints[i]), "#fff"];
+          const to = others[Math.floor(rand() * others.length)];
+          const angle = Math.floor(rand() * 360);
+          const mix = 25 + Math.floor(rand() * 30);
+          const fill = `linear-gradient(${angle}deg in oklab, ${tints[tint]}, color-mix(in oklab, ${tints[tint]} ${100 - mix}%, ${to}))`;
+          html.push(
+            `<span class="block${calm ? "" : " drop"}" style="left:calc(var(--cell)*${col});top:calc(var(--cell)*${row});` +
+            `width:calc(var(--cell)*${w});height:calc(var(--cell)*${h});animation-delay:${delay}ms">` +
+            `<span style="background:${tints[tint]};background:${fill}"></span></span>`
+          );
+        }
+      }
+      wall.innerHTML = html.join("");
+    })();
+
+    // ---- Buttons: a burst of pastel bubbles from the circle on press ----
+    const bubbleTones = ["#f9a8c9", "#93cdf0", "#b5a3f5", "#8fdcb6", "#fbd27a", "#fdb48c"];
+    document.querySelectorAll(".btn").forEach((button) => {
+      button.addEventListener("pointerdown", () => {
+        if (calm) return;
+        for (let i = 0; i < 10; i++) {
+          const angle = (i / 10) * Math.PI * 2 + Math.random() * 0.5;
+          const distance = 38 + Math.random() * 34;
+          const b = document.createElement("span");
+          b.className = "pop";
+          b.style.setProperty("--dx", `${Math.cos(angle) * distance}px`);
+          b.style.setProperty("--dy", `${Math.sin(angle) * distance}px`);
+          b.style.setProperty("--size", `${7 + Math.random() * 7}px`);
+          b.style.setProperty("--c", bubbleTones[i % bubbleTones.length]);
+          b.addEventListener("animationend", () => b.remove());
+          button.appendChild(b);
+        }
+      });
+    });
+
+    // ---- Wordmark: letters drop in once it's in view (after the blocks), and lift on hover ----
+    (function () {
+      const clip = document.getElementById("wordmark");
+      const line = clip.querySelector(".wordmark");
+      line.innerHTML = [..."smacmedialab"]
+        .map((ch, i) => `<span class="wm-letter"><span class="wm-drop" style="--d:${700 + i * 55}ms">${ch}</span></span>`)
+        .join("");
+      if (calm) return;
+      clip.classList.add("wm-armed");
+      const observer = new IntersectionObserver(([entry]) => {
+        if (entry.isIntersecting) {
+          clip.classList.add("wm-in");
+          observer.disconnect();
+        }
+      }, { threshold: 0.4 });
+      observer.observe(clip);
+    })();
+  </script>
 </body>
 </html>
