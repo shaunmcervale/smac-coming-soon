@@ -36,8 +36,8 @@
     a { color: inherit; text-decoration: none; }
 
     /* ---- Background: a wall of pastel blocks that drops into place on load (built by the script) ---- */
-    /* as tall as the page (up to 1080px), so the fade to white always lands behind the wordmark */
-    .blocks { position: absolute; inset: 0 0 auto; height: min(100%, 1080px); z-index: -1; overflow: hidden; pointer-events: none; }
+    /* as tall as the page, so the fade to white always lands behind the wordmark */
+    .blocks { position: absolute; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; }
     .wall { position: absolute; left: 50%; top: 0; transform: translateX(-50%); }
     .block { position: absolute; padding: 3px; }
     .block > span { display: block; width: 100%; height: 100%; border-radius: 14px; }
@@ -263,54 +263,80 @@
     document.getElementById("year").textContent = new Date().getFullYear();
     const calm = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-    // ---- Block wall: same seeded packer as the main site's BlockField, so it's the same wall ----
+    // ---- Block wall: same seeded packer as the main site's BlockField, sized to cover the screen
+    // edge to edge (big monitors included). Grows without re-dropping if the window gets bigger. ----
     (function () {
       const tints = ["var(--butter)", "var(--sky)", "var(--blush)", "var(--mint)", "var(--lilac)"];
       // neighbours on the colour wheel; blending opposites (butter + lilac) turns grey
       const neighbours = [[2, 3], [3, 4], [0, 4], [0, 1], [1, 2]];
       const shapes = [[1,1],[1,1],[1,1],[2,1],[2,1],[1,2],[1,2],[2,2],[2,2],[3,1],[1,3],[3,2],[2,3]];
-      const cols = 30, rows = 15;
-      let seed = 7;
-      const rand = () => {
-        seed |= 0; seed = (seed + 0x6d2b79f5) | 0;
-        let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
-        t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-        return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-      };
-      const tintAt = Array.from({ length: rows }, () => Array(cols).fill(-1));
       const wall = document.getElementById("wall");
-      wall.style.width = `calc(var(--cell) * ${cols})`;
-      wall.style.height = `calc(var(--cell) * ${rows})`;
-      const html = [];
-      for (let row = 0; row < rows; row++) {
-        for (let col = 0; col < cols; col++) {
-          if (tintAt[row][col] !== -1) continue;
-          const order = [...shapes].sort(() => rand() - 0.5);
-          const [w, h] = order.find(([w, h]) => {
-            if (col + w > cols || row + h > rows) return false;
-            for (let r = row; r < row + h; r++) for (let c = col; c < col + w; c++) if (tintAt[r][c] !== -1) return false;
-            return true;
-          }) || [1, 1];
-          const near = new Set();
-          for (let c = col; c < col + w; c++) if (row > 0) near.add(tintAt[row - 1][c]);
-          for (let r = row; r < row + h; r++) if (col > 0) near.add(tintAt[r][col - 1]);
-          const choices = tints.map((_, i) => i).filter((i) => !near.has(i));
-          const tint = choices[Math.floor(rand() * choices.length)] ?? 0;
-          for (let r = row; r < row + h; r++) for (let c = col; c < col + w; c++) tintAt[r][c] = tint;
-          const delay = (rows - (row + h)) * 65 + Math.floor(rand() * 90);
-          const others = [...neighbours[tint].map((i) => tints[i]), "#fff"];
-          const to = others[Math.floor(rand() * others.length)];
-          const angle = Math.floor(rand() * 360);
-          const mix = 25 + Math.floor(rand() * 30);
-          const fill = `linear-gradient(${angle}deg in oklab, ${tints[tint]}, color-mix(in oklab, ${tints[tint]} ${100 - mix}%, ${to}))`;
-          html.push(
-            `<span class="block${calm ? "" : " drop"}" style="left:calc(var(--cell)*${col});top:calc(var(--cell)*${row});` +
-            `width:calc(var(--cell)*${w});height:calc(var(--cell)*${h});animation-delay:${delay}ms">` +
-            `<span style="background:${tints[tint]};background:${fill}"></span></span>`
-          );
-        }
+      let built = { cols: 0, rows: 0 };
+
+      function size() {
+        const cell = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--cell")) || 72;
+        const height = Math.max(window.innerHeight, document.body.scrollHeight);
+        // +2 columns so the centred wall always overhangs both edges
+        return { cols: Math.ceil(window.innerWidth / cell) + 2, rows: Math.ceil(height / cell) + 1 };
       }
-      wall.innerHTML = html.join("");
+
+      function build({ cols, rows }, drop) {
+        built = { cols, rows };
+        let seed = 7;
+        const rand = () => {
+          seed |= 0; seed = (seed + 0x6d2b79f5) | 0;
+          let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+          t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+          return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+        };
+        // keep the whole drop to about a second however many rows there are
+        const rowStep = Math.min(65, 1000 / rows);
+        const tintAt = Array.from({ length: rows }, () => Array(cols).fill(-1));
+        wall.style.width = `calc(var(--cell) * ${cols})`;
+        wall.style.height = `calc(var(--cell) * ${rows})`;
+        const html = [];
+        for (let row = 0; row < rows; row++) {
+          for (let col = 0; col < cols; col++) {
+            if (tintAt[row][col] !== -1) continue;
+            const order = [...shapes].sort(() => rand() - 0.5);
+            const [w, h] = order.find(([w, h]) => {
+              if (col + w > cols || row + h > rows) return false;
+              for (let r = row; r < row + h; r++) for (let c = col; c < col + w; c++) if (tintAt[r][c] !== -1) return false;
+              return true;
+            }) || [1, 1];
+            const near = new Set();
+            for (let c = col; c < col + w; c++) if (row > 0) near.add(tintAt[row - 1][c]);
+            for (let r = row; r < row + h; r++) if (col > 0) near.add(tintAt[r][col - 1]);
+            const choices = tints.map((_, i) => i).filter((i) => !near.has(i));
+            const tint = choices[Math.floor(rand() * choices.length)] ?? 0;
+            for (let r = row; r < row + h; r++) for (let c = col; c < col + w; c++) tintAt[r][c] = tint;
+            const delay = Math.round((rows - (row + h)) * rowStep) + Math.floor(rand() * 90);
+            const others = [...neighbours[tint].map((i) => tints[i]), "#fff"];
+            const to = others[Math.floor(rand() * others.length)];
+            const angle = Math.floor(rand() * 360);
+            const mix = 25 + Math.floor(rand() * 30);
+            const fill = `linear-gradient(${angle}deg in oklab, ${tints[tint]}, color-mix(in oklab, ${tints[tint]} ${100 - mix}%, ${to}))`;
+            html.push(
+              `<span class="block${drop ? " drop" : ""}" style="left:calc(var(--cell)*${col});top:calc(var(--cell)*${row});` +
+              `width:calc(var(--cell)*${w});height:calc(var(--cell)*${h});animation-delay:${delay}ms">` +
+              `<span style="background:${tints[tint]};background:${fill}"></span></span>`
+            );
+          }
+        }
+        wall.innerHTML = html.join("");
+      }
+
+      build(size(), !calm);
+      let timer;
+      window.addEventListener("resize", () => {
+        clearTimeout(timer);
+        timer = setTimeout(() => {
+          const next = size();
+          if (next.cols > built.cols || next.rows > built.rows) {
+            build({ cols: Math.max(next.cols, built.cols), rows: Math.max(next.rows, built.rows) }, false);
+          }
+        }, 150);
+      });
     })();
 
     // ---- Buttons: a burst of pastel bubbles from the circle on press ----
